@@ -2,6 +2,9 @@ export const remoji = { init };
 
 const styles = () => `
   .remoji {
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
     position: relative;
   }
   .remoji-add {
@@ -37,6 +40,17 @@ const styles = () => `
     background-color: #eee;
     cursor: pointer;
   }
+  .remoji-reactions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .remoji-reaction {
+    border: 1px solid #eee;
+    border-radius: 1rem;
+    padding: 0.125rem 0.5rem;
+    font-family: sans-serif;
+  }
 `;
 
 export function init() {
@@ -45,7 +59,8 @@ export function init() {
   document.head.appendChild(style);
   const containers = document.querySelectorAll("[data-remoji]");
   Array.from(containers).map((container) => {
-    container.appendChild(element());
+    const data = JSON.parse(container.getAttribute("data-remoji") ?? "{}");
+    container.appendChild(element(data));
   });
 
   addEventListener("click", (e) => {
@@ -56,13 +71,10 @@ export function init() {
       options.style.display = "flex";
       return;
     }
-    if (e.target.parentNode?.classList?.contains?.("remoji-options")) {
-      // save it
-    }
   });
 }
 
-export function element() {
+export function element(data) {
   const container = document.createElement("div");
   container.classList.add("remoji");
   const options = document.createElement("div");
@@ -78,5 +90,14 @@ export function element() {
   add.classList.add("remoji-add");
   add.innerHTML = "☺";
   container.appendChild(add);
+  const reactions = document.createElement("div");
+  reactions.classList.add("remoji-reactions");
+  for (const r in data.reactions) {
+    const reaction = document.createElement("div");
+    reaction.classList.add("remoji-reaction");
+    reaction.innerHTML = `${r} 1`;
+    reactions.append(reaction);
+  }
+  container.append(reactions);
   return container;
 }
