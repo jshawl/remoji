@@ -8,69 +8,15 @@
       body {
         padding: 1rem;
       }
-      .remoji {
-        position: relative;
-      }
-      .remoji-add {
-        background: #eee;
-        border-radius: 100%;
-        display: inline-block;
-        font-size: 2rem;
-        height: 2rem;
-        line-height: 2rem;
-      }
-      .remoji-add:hover {
-        background: #ddd;
-        cursor: pointer;
-      }
-      .remoji-options {
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        display: none;
-        font-size: 1.25rem;
-        margin-top: 0.5rem;
-        padding: 3px;
-        position: absolute;
-        top: 100%;
-      }
-      .remoji-options span {
-        border-radius: 3px;
-        display: inline-block;
-        padding: 0.5rem;
-        text-align: center;
-        width: 1.5rem;
-      }
-      .remoji-options span:hover {
-        background-color: #eee;
-        cursor: pointer;
-      }
     </style>
   </head>
   <body>
     <h1>remoji</h1>
-    <div class="remoji">
-      <div class="remoji-options">
-        <span>👍</span>
-        <span>😄</span>
-        <span>🎉</span>
-        <span>❤️</span>
-        <span>🚀</span>
-        <span>👀</span>
-      </div>
-      <div class="remoji-add">☺</div>
-    </div>
-    <script>
-      addEventListener("click", (e) => {
-        if (e.target.classList.contains("remoji-add")) {
-          const options = e.target.parentNode.querySelector(".remoji-options");
-          options.style.display = "flex";
-          return;
-        }
-        if (e.target.parentNode?.classList?.contains?.("remoji-options")) {
-          // save it
-        }
-        document.querySelector(".remoji-options").style.display = "none";
-      });
+    <div data-remoji></div>
+    <div data-remoji></div>
+    <script type="module">
+      import { remoji } from "http://localhost:8080/remoji.js";
+      remoji.init();
     </script>
   </body>
 </html>
