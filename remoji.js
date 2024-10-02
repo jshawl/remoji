@@ -10,14 +10,40 @@ class Remoji {
       }
       if (e.target.parentNode?.classList.contains("remoji-options")) {
         const reaction = e.target.innerHTML;
-        this.data.reactions[reaction] ??= 0;
-        this.data.reactions[reaction]++;
+        if (this.data.reactions[reaction]) {
+          // toggle existing
+          this.data.reactions[reaction].self =
+            !this.data.reactions[reaction].self;
+          if (this.data.reactions[reaction].self) {
+            this.data.reactions[reaction].count++;
+          } else {
+            this.data.reactions[reaction].count--;
+          }
+        } else {
+          // add new
+          this.data.reactions[reaction] = { self: true, count: 1 };
+        }
+
+        if (this.data.reactions[reaction].count === 0) {
+          delete this.data.reactions[reaction];
+        }
+
         this.render();
         return;
       }
       if (e.target.classList.contains("remoji-reaction")) {
         const reaction = e.target.getAttribute("data-remoji-emoji");
-        this.data.reactions[reaction]++;
+        const self = e.target.getAttribute("data-remoji-self");
+        if (self === "true") {
+          this.data.reactions[reaction].count--;
+          this.data.reactions[reaction].self = false;
+          if (this.data.reactions[reaction].count === 0) {
+            delete this.data.reactions[reaction];
+          }
+        } else {
+          this.data.reactions[reaction].self = true;
+          this.data.reactions[reaction].count++;
+        }
         this.render();
         return;
       }
@@ -27,8 +53,8 @@ class Remoji {
     // eventually from an API
     this.data = {
       reactions: {
-        "😄": 1,
-        "❤️": 1,
+        "😄": { count: 1 },
+        "❤️": { count: 1, self: true },
       },
     };
 
@@ -41,9 +67,18 @@ class Remoji {
       const reaction = document.createElement("div");
       reaction.classList.add("remoji-reaction");
       reaction.setAttribute("data-remoji-emoji", r);
-      reaction.innerHTML = `${r} ${this.data.reactions[r]}`;
+      reaction.innerHTML = `${r} ${this.data.reactions[r].count}`;
+      reaction.setAttribute("data-remoji-self", !!this.data.reactions[r].self);
       reactions.append(reaction);
     }
+    const options = this.element.querySelectorAll(".remoji-options span");
+    Array.from(options).forEach((option) => {
+      if (this.data.reactions[option.innerHTML]?.self) {
+        option.setAttribute("data-remoji-self", true);
+      } else {
+        option.setAttribute("data-remoji-self", false);
+      }
+    });
   }
 }
 
@@ -73,6 +108,7 @@ const styles = () => `
     border-radius: 6px;
     display: none;
     font-size: 1.25rem;
+    gap: 2px;
     margin-top: 0.5rem;
     padding: 3px;
     position: absolute;
@@ -85,7 +121,8 @@ const styles = () => `
     text-align: center;
     width: 1.5rem;
   }
-  .remoji-options span:hover {
+  .remoji-options span:hover,
+  .remoji-options span[data-remoji-self="true"] {
     background-color: #eee;
     cursor: pointer;
   }
@@ -99,6 +136,11 @@ const styles = () => `
     border-radius: 1rem;
     padding: 0.125rem 0.5rem;
     font-family: sans-serif;
+    cursor: pointer
+  }
+  .remoji-reaction[data-remoji-self="true"]{
+    background: azure;
+    border-color: skyblue;
   }
 `;
 
