@@ -1,3 +1,52 @@
+class Remoji {
+  constructor(element) {
+    this.element = element;
+    this.load();
+    element.addEventListener("click", (e) => {
+      if (e.target.classList.contains("remoji-add")) {
+        const options = element.querySelector(".remoji-options");
+        options.style.display = "flex";
+        return;
+      }
+      if (e.target.parentNode?.classList.contains("remoji-options")) {
+        const reaction = e.target.innerHTML;
+        this.data.reactions[reaction] ??= 0;
+        this.data.reactions[reaction]++;
+        this.render();
+        return;
+      }
+      if (e.target.classList.contains("remoji-reaction")) {
+        const reaction = e.target.getAttribute("data-remoji-emoji");
+        this.data.reactions[reaction]++;
+        this.render();
+        return;
+      }
+    });
+  }
+  load() {
+    // eventually from an API
+    this.data = {
+      reactions: {
+        "😄": 1,
+        "❤️": 1,
+      },
+    };
+
+    this.render();
+  }
+  render() {
+    const reactions = this.element.querySelector(".remoji-reactions");
+    reactions.innerHTML = "";
+    for (let r in this.data.reactions) {
+      const reaction = document.createElement("div");
+      reaction.classList.add("remoji-reaction");
+      reaction.setAttribute("data-remoji-emoji", r);
+      reaction.innerHTML = `${r} ${this.data.reactions[r]}`;
+      reactions.append(reaction);
+    }
+  }
+}
+
 export const remoji = { init };
 
 const styles = () => `
@@ -58,23 +107,21 @@ export function init() {
   style.innerHTML = styles();
   document.head.appendChild(style);
   const containers = document.querySelectorAll("[data-remoji]");
-  Array.from(containers).map((container) => {
-    const data = JSON.parse(container.getAttribute("data-remoji") ?? "{}");
-    container.appendChild(element(data));
-  });
-
   addEventListener("click", (e) => {
-    const allOptions = document.querySelectorAll(".remoji-options");
-    Array.from(allOptions).map((options) => (options.style.display = "none"));
     if (e.target.classList.contains("remoji-add")) {
-      const options = e.target.parentNode.querySelector(".remoji-options");
-      options.style.display = "flex";
       return;
     }
+    const allOptions = document.querySelectorAll(".remoji-options");
+    Array.from(allOptions).map((options) => (options.style.display = "none"));
+  });
+  Array.from(containers).map((container) => {
+    const el = element();
+    new Remoji(el);
+    container.appendChild(el);
   });
 }
 
-export function element(data) {
+export function element() {
   const container = document.createElement("div");
   container.classList.add("remoji");
   const options = document.createElement("div");
@@ -92,12 +139,6 @@ export function element(data) {
   container.appendChild(add);
   const reactions = document.createElement("div");
   reactions.classList.add("remoji-reactions");
-  for (const r in data.reactions) {
-    const reaction = document.createElement("div");
-    reaction.classList.add("remoji-reaction");
-    reaction.innerHTML = `${r} 1`;
-    reactions.append(reaction);
-  }
   container.append(reactions);
   return container;
 }
