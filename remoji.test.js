@@ -7,7 +7,7 @@ const resetDOM = () => {
 };
 
 const mount = () => {
-  document.body.innerHTML = "<div data-remoji></div>";
+  document.body.innerHTML = "<div data-remoji-id='a'></div>";
   init();
 };
 
@@ -34,9 +34,14 @@ describe("remoji", () => {
     it("renders a UI for multiple elements with a data-remoji attribute", () => {
       expect(document.body.querySelector(".remoji")).toBeFalsy();
       document.body.innerHTML =
-        "<div data-remoji></div><div data-remoji></div>";
+        "<div data-remoji-id='a'></div><div data-remoji-id='b'></div>";
       init();
       expect(document.body.querySelectorAll(".remoji").length).toBe(2);
+    });
+
+    it("throws if data-remoji-id is falsy", () => {
+      document.body.innerHTML = "<div data-remoji-id></div>";
+      expect(() => init()).toThrowError("data-remoji-id attribute missing!");
     });
   });
 

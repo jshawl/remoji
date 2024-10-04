@@ -1,6 +1,10 @@
 class Remoji {
-  constructor(element) {
+  constructor(element, id) {
     this.element = element;
+    this.id = id;
+    if (!this.id) {
+      throw new Error("data-remoji-id attribute missing!");
+    }
     this.load();
     element.addEventListener("click", (e) => {
       if (e.target.classList.contains("remoji-add")) {
@@ -145,7 +149,7 @@ export function init() {
   const style = document.createElement("style");
   style.innerHTML = styles();
   document.head.appendChild(style);
-  const containers = document.querySelectorAll("[data-remoji]");
+  const containers = document.querySelectorAll("[data-remoji-id]");
   addEventListener("click", (e) => {
     if (e.target.classList.contains("remoji-add")) {
       return;
@@ -155,7 +159,8 @@ export function init() {
   });
   Array.from(containers).map((container) => {
     const el = element();
-    new Remoji(el);
+    const id = container.getAttribute("data-remoji-id");
+    new Remoji(el, id);
     container.appendChild(el);
   });
 }
