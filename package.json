@@ -5,12 +5,13 @@
   "main": "index.js",
   "scripts": {
     "start": "npx http-server . --cors",
-    "test": "vitest run"
+    "test": "vitest run --coverage"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@vitest/coverage-v8": "^2.1.2",
     "jsdom": "^25.0.1",
     "vitest": "^2.1.1"
   }

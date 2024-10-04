@@ -10,7 +10,7 @@ class Remoji {
       }
       if (e.target.parentNode?.classList.contains("remoji-options")) {
         const reaction = e.target.innerHTML;
-        if (this.data.reactions[reaction]) {
+        if (this.data.reactions?.[reaction]) {
           // toggle existing
           this.data.reactions[reaction].self =
             !this.data.reactions[reaction].self;
@@ -21,6 +21,7 @@ class Remoji {
           }
         } else {
           // add new
+          this.data.reactions = this.data.reactions || {};
           this.data.reactions[reaction] = { self: true, count: 1 };
         }
 
@@ -51,12 +52,8 @@ class Remoji {
   }
   load() {
     // eventually from an API
-    this.data = {
-      reactions: {
-        "😄": { count: 1 },
-        "❤️": { count: 1, self: true },
-      },
-    };
+    // but also merging w/ local storage for unauthenticated reactions
+    this.data = JSON.parse(localStorage.getItem("remoji") || "{}");
 
     this.render();
   }
@@ -73,7 +70,7 @@ class Remoji {
     }
     const options = this.element.querySelectorAll(".remoji-options span");
     Array.from(options).forEach((option) => {
-      if (this.data.reactions[option.innerHTML]?.self) {
+      if (this.data.reactions?.[option.innerHTML]?.self) {
         option.setAttribute("data-remoji-self", true);
       } else {
         option.setAttribute("data-remoji-self", false);
@@ -168,12 +165,12 @@ export function element() {
   container.classList.add("remoji");
   const options = document.createElement("div");
   options.classList.add("remoji-options");
-  options.innerHTML = `<span>👍</span>
-        <span>😄</span>
-        <span>🎉</span>
-        <span>❤️</span>
-        <span>🚀</span>
-        <span>👀</span>`;
+  options.innerHTML = `<span data-remoji-emoji="👍">👍</span>
+        <span data-remoji-emoji="😄">😄</span>
+        <span data-remoji-emoji="🎉">🎉</span>
+        <span data-remoji-emoji="❤️">❤️</span>
+        <span data-remoji-emoji="🚀">🚀</span>
+        <span data-remoji-emoji="👀">👀</span>`;
   container.appendChild(options);
   const add = document.createElement("div");
   add.classList.add("remoji-add");
