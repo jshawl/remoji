@@ -1,6 +1,7 @@
 class Remoji {
   constructor(element) {
     this.element = element;
+    this.id = element.getAttribute("data-remoji-id");
     this.load();
     element.addEventListener("click", (e) => {
       if (e.target.classList.contains("remoji-add")) {
@@ -145,7 +146,7 @@ export function init() {
   const style = document.createElement("style");
   style.innerHTML = styles();
   document.head.appendChild(style);
-  const containers = document.querySelectorAll("[data-remoji]");
+  const containers = document.querySelectorAll("[data-remoji-id]");
   addEventListener("click", (e) => {
     if (e.target.classList.contains("remoji-add")) {
       return;
