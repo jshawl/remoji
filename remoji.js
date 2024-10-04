@@ -48,19 +48,22 @@ class Remoji {
   load() {
     // eventually from an API
     // but also merging w/ local storage for unauthenticated reactions
-    this.data = JSON.parse(
-      localStorage.getItem("remoji") || '{"reactions":{}}'
-    );
-
-    const reactions = JSON.parse(
-      localStorage.getItem("remoji-reactions") || "[]"
-    );
-    reactions.forEach((reaction) => {
-      this.data.reactions[reaction] ??= { count: 1 };
-      this.data.reactions[reaction].self = true;
+    // this.data = JSON.parse(
+    //   localStorage.getItem("remoji") || '{"reactions":{}}'
+    // );
+    const org = window.location.host;
+    fetch(`http://localhost:8787/${org}/abcd`).then(async (response) => {
+      const data = await response.json();
+      this.data = { reactions: data };
+      const reactions = JSON.parse(
+        localStorage.getItem("remoji-reactions") || "[]"
+      );
+      reactions.forEach((reaction) => {
+        this.data.reactions[reaction] ??= { count: 1 };
+        this.data.reactions[reaction].self = true;
+      });
+      this.render();
     });
-
-    this.render();
   }
   render() {
     const reactions = this.element.querySelector(".remoji-reactions");
