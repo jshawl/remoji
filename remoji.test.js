@@ -118,6 +118,7 @@ describe("remoji", () => {
         expect($(".remoji-reaction[data-remoji-emoji='😄']")).toBeFalsy();
       });
     });
+
     describe("clicking on .remoji-reaction", () => {
       it("increments a reaction", () => {
         const data = {
@@ -133,6 +134,36 @@ describe("remoji", () => {
         expect($(`.remoji-reaction[data-remoji-emoji='😄']`).innerHTML).toMatch(
           data.reactions["😄"].count + 1
         );
+      });
+
+      it("decrements a reaction", () => {
+        const data = {
+          reactions: {
+            "😄": { count: Math.floor(Math.random() * 10) + 2, self: true },
+          },
+        };
+        localStorage.setItem("remoji", JSON.stringify(data));
+        mount();
+        $(".remoji-add").click();
+        const reaction = $(".remoji-reaction[data-remoji-emoji='😄']");
+        reaction.click();
+        expect($(`.remoji-reaction[data-remoji-emoji='😄']`).innerHTML).toMatch(
+          data.reactions["😄"].count - 1
+        );
+      });
+
+      it("removes a reaction", () => {
+        const data = {
+          reactions: {
+            "😄": { count: 1, self: true },
+          },
+        };
+        localStorage.setItem("remoji", JSON.stringify(data));
+        mount();
+        $(".remoji-add").click();
+        const reaction = $(".remoji-reaction[data-remoji-emoji='😄']");
+        reaction.click();
+        expect($(`.remoji-reaction[data-remoji-emoji='😄']`)).toBeFalsy();
       });
     });
   });

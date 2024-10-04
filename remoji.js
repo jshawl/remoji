@@ -161,16 +161,14 @@ export function init() {
 }
 
 export function element() {
+  const emojiOptions = ["👍", "😄", "❤️", "🚀", "👀"];
   const container = document.createElement("div");
   container.classList.add("remoji");
   const options = document.createElement("div");
   options.classList.add("remoji-options");
-  options.innerHTML = `<span data-remoji-emoji="👍">👍</span>
-        <span data-remoji-emoji="😄">😄</span>
-        <span data-remoji-emoji="🎉">🎉</span>
-        <span data-remoji-emoji="❤️">❤️</span>
-        <span data-remoji-emoji="🚀">🚀</span>
-        <span data-remoji-emoji="👀">👀</span>`;
+  options.innerHTML = emojiOptions
+    .map((option) => `<span data-remoji-emoji="${option}">${option}</span>`)
+    .join("");
   container.appendChild(options);
   const add = document.createElement("div");
   add.classList.add("remoji-add");
