@@ -1,7 +1,10 @@
 class Remoji {
-  constructor(element) {
+  constructor(element, id) {
     this.element = element;
-    this.id = element.getAttribute("data-remoji-id");
+    this.id = id;
+    if (!this.id) {
+      throw new Error("data-remoji-id attribute missing!");
+    }
     this.load();
     element.addEventListener("click", (e) => {
       if (e.target.classList.contains("remoji-add")) {
@@ -156,7 +159,8 @@ export function init() {
   });
   Array.from(containers).map((container) => {
     const el = element();
-    new Remoji(el);
+    const id = container.getAttribute("data-remoji-id");
+    new Remoji(el, id);
     container.appendChild(el);
   });
 }

@@ -38,6 +38,11 @@ describe("remoji", () => {
       init();
       expect(document.body.querySelectorAll(".remoji").length).toBe(2);
     });
+
+    it("throws if data-remoji-id is falsy", () => {
+      document.body.innerHTML = "<div data-remoji-id></div>";
+      expect(() => init()).toThrowError("data-remoji-id attribute missing!");
+    });
   });
 
   describe("clicking on .remoji-add", () => {
