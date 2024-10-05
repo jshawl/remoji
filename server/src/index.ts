@@ -1,7 +1,3 @@
-interface Env {
-  DB: D1Database;
-}
-
 class JSONResponse extends Response {
   constructor(body?: Record<string, unknown>, init?: ResponseInit) {
     super(JSON.stringify(body, null, 2), {
