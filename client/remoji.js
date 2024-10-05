@@ -24,43 +24,57 @@ class Remoji {
       }
     });
   }
-  update(reaction, self) {
+  update(emoji, self) {
     const reactions = JSON.parse(
       localStorage.getItem("remoji-reactions") ?? "[]"
     );
+    let action;
     if (self === "true") {
-      this.data.reactions[reaction].count--;
-      this.data.reactions[reaction].self = false;
-      reactions.splice(reactions.indexOf(reaction), 1);
-      if (this.data.reactions[reaction].count === 0) {
-        delete this.data.reactions[reaction];
+      action = "decrement";
+      this.data.reactions[emoji].count--;
+      this.data.reactions[emoji].self = false;
+      reactions.splice(reactions.indexOf(emoji), 1);
+      if (this.data.reactions[emoji].count === 0) {
+        delete this.data.reactions[emoji];
       }
     } else {
+      action = "increment";
       this.data.reactions ??= {};
-      this.data.reactions[reaction] ??= { count: 0 };
-      this.data.reactions[reaction].self = true;
-      this.data.reactions[reaction].count++;
-      reactions.push(reaction);
+      this.data.reactions[emoji] ??= { count: 0 };
+      this.data.reactions[emoji].self = true;
+      this.data.reactions[emoji].count++;
+      reactions.push(emoji);
     }
+    const org = window.location.host;
+    fetch(`http://localhost:8787/${org}/abcd`, {
+      method: "POST",
+      body: JSON.stringify({
+        action,
+        emoji,
+      }),
+    });
     localStorage.setItem("remoji-reactions", JSON.stringify(reactions));
     this.render();
   }
   load() {
     // eventually from an API
     // but also merging w/ local storage for unauthenticated reactions
-    this.data = JSON.parse(
-      localStorage.getItem("remoji") || '{"reactions":{}}'
-    );
-
-    const reactions = JSON.parse(
-      localStorage.getItem("remoji-reactions") || "[]"
-    );
-    reactions.forEach((reaction) => {
-      this.data.reactions[reaction] ??= { count: 1 };
-      this.data.reactions[reaction].self = true;
+    // this.data = JSON.parse(
+    //   localStorage.getItem("remoji") || '{"reactions":{}}'
+    // );
+    const org = window.location.host;
+    fetch(`http://localhost:8787/${org}/abcd`).then(async (response) => {
+      const data = await response.json();
+      this.data = { reactions: data };
+      const reactions = JSON.parse(
+        localStorage.getItem("remoji-reactions") || "[]"
+      );
+      reactions.forEach((reaction) => {
+        this.data.reactions[reaction] ??= { count: 1 };
+        this.data.reactions[reaction].self = true;
+      });
+      this.render();
     });
-
-    this.render();
   }
   render() {
     const reactions = this.element.querySelector(".remoji-reactions");

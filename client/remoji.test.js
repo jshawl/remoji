@@ -13,10 +13,20 @@ const mount = () => {
 
 const $ = (selector) => document.querySelector(selector);
 
+const mockFetchResponseOnce = (response) => {
+  globalThis.fetch = vi.fn(() => ({
+    then: (callback) =>
+      callback({
+        json: async () => response,
+      }),
+  }));
+};
+
 describe("remoji", () => {
   describe(".init()", () => {
     beforeEach(() => {
       resetDOM();
+      mockFetchResponseOnce({});
     });
 
     it("appends styles to the DOM", () => {
@@ -62,10 +72,13 @@ describe("remoji", () => {
 
     describe("clicking on .remoji-option", () => {
       beforeEach(() => {
+        resetDOM();
         localStorage.removeItem("remoji-reactions");
       });
-      it("creates a reaction", () => {
+      it("creates a reaction", async () => {
+        mockFetchResponseOnce({ "🚀": { count: 1 } });
         mount();
+        await vi.waitFor(() => $(".remoji-reaction"));
         $(".remoji-add").click();
         const option = $(".remoji-options [data-remoji-emoji='😄']");
         expect($(".remoji-reaction[data-remoji-emoji='😄']")).toBeFalsy();
@@ -83,56 +96,55 @@ describe("remoji", () => {
         expect(localStorage.getItem("remoji-reactions")).toBe('["😄","❤️"]');
       });
 
-      it("increments a reaction", () => {
-        const data = {
-          reactions: {
-            "😄": { count: Math.floor(Math.random() * 10) + 1, self: false },
-          },
-        };
-        localStorage.setItem("remoji", JSON.stringify(data));
+      it("increments a reaction", async () => {
+        const count = Math.floor(Math.random() * 10) + 1;
+        mockFetchResponseOnce({
+          "😄": { count },
+        });
         mount();
+        await vi.waitFor(() => $(".remoji-reaction"));
         $(".remoji-add").click();
         const option = $(".remoji-options [data-remoji-emoji='😄']");
         expect($(".remoji-reaction[data-remoji-emoji='😄']").innerHTML).toMatch(
-          data.reactions["😄"].count
+          count
         );
         option.click();
         expect($(".remoji-reaction[data-remoji-emoji='😄']").innerHTML).toMatch(
-          data.reactions["😄"].count + 1
+          count + 1
         );
       });
 
-      it("decrements a reaction", () => {
-        const data = {
-          reactions: {
-            "😄": { count: Math.floor(Math.random() * 10) + 2, self: true },
-          },
-        };
-        localStorage.setItem("remoji", JSON.stringify(data));
+      it("decrements a reaction", async () => {
+        const count = Math.floor(Math.random() * 10) + 2;
+        localStorage.setItem("remoji-reactions", '["😄"]');
+        mockFetchResponseOnce({
+          "😄": { count },
+        });
         mount();
+        await vi.waitFor(() => $(".remoji-reaction"));
         $(".remoji-add").click();
         const option = $(".remoji-options [data-remoji-emoji='😄']");
         expect($(".remoji-reaction[data-remoji-emoji='😄']").innerHTML).toMatch(
-          data.reactions["😄"].count
+          count
         );
         option.click();
         expect($(".remoji-reaction[data-remoji-emoji='😄']").innerHTML).toMatch(
-          data.reactions["😄"].count - 1
+          count - 1
         );
       });
 
-      it("removes a reaction", () => {
-        const data = {
-          reactions: {
-            "😄": { count: 1, self: true },
-          },
-        };
-        localStorage.setItem("remoji", JSON.stringify(data));
+      it("removes a reaction", async () => {
+        const count = 1;
+        localStorage.setItem("remoji-reactions", '["😄"]');
+        mockFetchResponseOnce({
+          "😄": { count },
+        });
         mount();
+        await vi.waitFor(() => $(".remoji-reaction"));
         $(".remoji-add").click();
         const option = $(".remoji-options [data-remoji-emoji='😄']");
-        expect($(".remoji-reaction[data-remoji-emoji='😄']").innerHTML).toMatch(
-          data.reactions["😄"].count
+        expect($('.remoji-reaction[data-remoji-emoji="😄"]').innerHTML).toMatch(
+          count
         );
         localStorage.setItem("remoji-reactions", '["😄"]');
         option.click();
@@ -142,46 +154,45 @@ describe("remoji", () => {
     });
 
     describe("clicking on .remoji-reaction", () => {
-      it("increments a reaction", () => {
-        const data = {
-          reactions: {
-            "😄": { count: Math.floor(Math.random() * 10) + 1, self: false },
-          },
-        };
-        localStorage.setItem("remoji", JSON.stringify(data));
+      it("increments a reaction", async () => {
+        const count = Math.floor(Math.random() * 10) + 1;
+        mockFetchResponseOnce({
+          "😄": { count },
+        });
         mount();
+        await vi.waitFor(() => $(".remoji-reaction"));
         $(".remoji-add").click();
         const reaction = $(".remoji-reaction[data-remoji-emoji='😄']");
         reaction.click();
         expect($(`.remoji-reaction[data-remoji-emoji='😄']`).innerHTML).toMatch(
-          data.reactions["😄"].count + 1
+          count + 1
         );
       });
 
-      it("decrements a reaction", () => {
-        const data = {
-          reactions: {
-            "😄": { count: Math.floor(Math.random() * 10) + 2, self: true },
-          },
-        };
-        localStorage.setItem("remoji", JSON.stringify(data));
+      it("decrements a reaction", async () => {
+        const count = Math.floor(Math.random() * 10) + 2;
+        localStorage.setItem("remoji-reactions", '["😄"]');
+        mockFetchResponseOnce({
+          "😄": { count },
+        });
         mount();
+        await vi.waitFor(() => $(".remoji-reaction"));
         $(".remoji-add").click();
         const reaction = $(".remoji-reaction[data-remoji-emoji='😄']");
         reaction.click();
         expect($(`.remoji-reaction[data-remoji-emoji='😄']`).innerHTML).toMatch(
-          data.reactions["😄"].count - 1
+          count - 1
         );
       });
 
-      it("removes a reaction", () => {
-        const data = {
-          reactions: {
-            "😄": { count: 1, self: true },
-          },
-        };
-        localStorage.setItem("remoji", JSON.stringify(data));
+      it("removes a reaction", async () => {
+        const count = 1;
+        localStorage.setItem("remoji-reactions", '["😄"]');
+        mockFetchResponseOnce({
+          "😄": { count },
+        });
         mount();
+        await vi.waitFor(() => $(".remoji-reaction"));
         $(".remoji-add").click();
         const reaction = $(".remoji-reaction[data-remoji-emoji='😄']");
         reaction.click();
