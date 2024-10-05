@@ -12,47 +12,32 @@ class Remoji {
         options.style.display = "flex";
         return;
       }
-      if (e.target.parentNode?.classList.contains("remoji-options")) {
-        const reaction = e.target.innerHTML;
-        if (this.data.reactions?.[reaction]) {
-          // toggle existing
-          this.data.reactions[reaction].self =
-            !this.data.reactions[reaction].self;
-          if (this.data.reactions[reaction].self) {
-            this.data.reactions[reaction].count++;
-          } else {
-            this.data.reactions[reaction].count--;
-          }
-        } else {
-          // add new
-          this.data.reactions = this.data.reactions || {};
-          this.data.reactions[reaction] = { self: true, count: 1 };
-        }
 
-        if (this.data.reactions[reaction].count === 0) {
-          delete this.data.reactions[reaction];
-        }
-
-        this.render();
-        return;
-      }
-      if (e.target.classList.contains("remoji-reaction")) {
-        const reaction = e.target.getAttribute("data-remoji-emoji");
+      if (
+        e.target.classList.contains("remoji-option") ||
+        e.target.classList.contains("remoji-reaction")
+      ) {
+        const emoji = e.target.getAttribute("data-remoji-emoji");
         const self = e.target.getAttribute("data-remoji-self");
-        if (self === "true") {
-          this.data.reactions[reaction].count--;
-          this.data.reactions[reaction].self = false;
-          if (this.data.reactions[reaction].count === 0) {
-            delete this.data.reactions[reaction];
-          }
-        } else {
-          this.data.reactions[reaction].self = true;
-          this.data.reactions[reaction].count++;
-        }
-        this.render();
+        this.update(emoji, self);
         return;
       }
     });
+  }
+  update(reaction, self) {
+    if (self === "true") {
+      this.data.reactions[reaction].count--;
+      this.data.reactions[reaction].self = false;
+      if (this.data.reactions[reaction].count === 0) {
+        delete this.data.reactions[reaction];
+      }
+    } else {
+      this.data.reactions ??= {};
+      this.data.reactions[reaction] ??= { count: 0 };
+      this.data.reactions[reaction].self = true;
+      this.data.reactions[reaction].count++;
+    }
+    this.render();
   }
   load() {
     // eventually from an API
@@ -72,7 +57,7 @@ class Remoji {
       reaction.setAttribute("data-remoji-self", !!this.data.reactions[r].self);
       reactions.append(reaction);
     }
-    const options = this.element.querySelectorAll(".remoji-options span");
+    const options = this.element.querySelectorAll(".remoji-option");
     Array.from(options).forEach((option) => {
       if (this.data.reactions?.[option.innerHTML]?.self) {
         option.setAttribute("data-remoji-self", true);
@@ -115,15 +100,15 @@ const styles = () => `
     position: absolute;
     top: 100%;
   }
-  .remoji-options span {
+  .remoji-option {
     border-radius: 3px;
     display: inline-block;
     padding: 0.5rem;
     text-align: center;
     width: 1.5rem;
   }
-  .remoji-options span:hover,
-  .remoji-options span[data-remoji-self="true"] {
+  .remoji-option:hover,
+  .remoji-option[data-remoji-self="true"] {
     background-color: #eee;
     cursor: pointer;
   }
@@ -145,7 +130,7 @@ const styles = () => `
   }
 `;
 
-export function init() {
+function init() {
   const style = document.createElement("style");
   style.innerHTML = styles();
   document.head.appendChild(style);
@@ -165,14 +150,17 @@ export function init() {
   });
 }
 
-export function element() {
+function element() {
   const emojiOptions = ["👍", "😄", "❤️", "🚀", "👀"];
   const container = document.createElement("div");
   container.classList.add("remoji");
   const options = document.createElement("div");
   options.classList.add("remoji-options");
   options.innerHTML = emojiOptions
-    .map((option) => `<span data-remoji-emoji="${option}">${option}</span>`)
+    .map(
+      (option) =>
+        `<span class="remoji-option" data-remoji-emoji="${option}">${option}</span>`
+    )
     .join("");
   container.appendChild(options);
   const add = document.createElement("div");

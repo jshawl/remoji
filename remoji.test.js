@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { init } from "./remoji";
+import { remoji } from "./remoji";
 
 const resetDOM = () => {
   document.head.innerHTML = "";
@@ -8,7 +8,7 @@ const resetDOM = () => {
 
 const mount = () => {
   document.body.innerHTML = "<div data-remoji-id='a'></div>";
-  init();
+  remoji.init();
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -35,13 +35,15 @@ describe("remoji", () => {
       expect(document.body.querySelector(".remoji")).toBeFalsy();
       document.body.innerHTML =
         "<div data-remoji-id='a'></div><div data-remoji-id='b'></div>";
-      init();
+      remoji.init();
       expect(document.body.querySelectorAll(".remoji").length).toBe(2);
     });
 
     it("throws if data-remoji-id is falsy", () => {
       document.body.innerHTML = "<div data-remoji-id></div>";
-      expect(() => init()).toThrowError("data-remoji-id attribute missing!");
+      expect(() => remoji.init()).toThrowError(
+        "data-remoji-id attribute missing!"
+      );
     });
   });
 
@@ -66,6 +68,14 @@ describe("remoji", () => {
         expect($(".remoji-reaction[data-remoji-emoji='😄']")).toBeFalsy();
         option.click();
         expect($(".remoji-reaction[data-remoji-emoji='😄']")).toBeTruthy();
+        expect($(".remoji-reaction[data-remoji-emoji='😄']").innerHTML).toMatch(
+          "1"
+        );
+        const otherOption = $(".remoji-options [data-remoji-emoji='❤️']");
+        otherOption.click();
+        expect($(".remoji-reaction[data-remoji-emoji='❤️']").innerHTML).toMatch(
+          "1"
+        );
       });
 
       it("increments a reaction", () => {
