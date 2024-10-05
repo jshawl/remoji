@@ -1,3 +1,7 @@
+interface Env {
+  DB: D1Database;
+}
+
 class JSONResponse extends Response {
   constructor(body: Record<string, unknown>, init?: ResponseInit) {
     super(JSON.stringify(body, null, 2), {
@@ -21,7 +25,19 @@ export default {
     const [org, id] = url.pathname.split("/").filter(String).slice(0, 2);
 
     if (org && id && request.method === "GET") {
-      return new JSONResponse(response);
+      const { results } = await env.DB.prepare(
+        "SELECT * FROM reactions WHERE org = ? AND instanceId = ?"
+      )
+        .bind(org, id)
+        .all<Record<string, number>>();
+      const out = results.reduce<Record<string, { count: number }>>(
+        (acc, el) => {
+          acc[el.emoji] = { count: el.count };
+          return acc;
+        },
+        {}
+      );
+      return new JSONResponse(out);
     }
 
     if (org && id && request.method === "POST") {
