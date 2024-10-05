@@ -4,13 +4,11 @@ import { describe, it, expect } from "vitest";
 describe("remoji api", () => {
   it("responds to GET /:org/:id", async () => {
     const response = await SELF.fetch("https://example.com/example.com/abc");
-    expect(await response.json()).toMatchInlineSnapshot(`
-		{
-			"😄": {
-			"count": 2,
-			},
-		}
-	`);
+    expect(await response.json()).toStrictEqual({
+      "😄": {
+        count: 2,
+      },
+    });
   });
 
   it("responds to POST /:org/:id", async () => {
@@ -21,13 +19,11 @@ describe("remoji api", () => {
         action: "decrement",
       }),
     });
-    expect(await response.json()).toMatchInlineSnapshot(`
-		{
-			"😄": {
-			"count": 1,
-			},
-		}
-	`);
+    expect(await response.json()).toStrictEqual({
+      "😄": {
+        count: 1,
+      },
+    });
   });
 
   it("responds to POST /:org/:id", async () => {
@@ -38,12 +34,10 @@ describe("remoji api", () => {
         action: "increment",
       }),
     });
-    expect(await response.json()).toMatchInlineSnapshot(`
-		{
-			"😄": {
-			"count": 2,
-			},
-		}
-	`);
+    expect(await response.json()).toStrictEqual({
+      "😄": {
+        count: 2,
+      },
+    });
   });
 });
