@@ -7,7 +7,7 @@ describe('remoji api', () => {
 		expect(await response.json()).toMatchInlineSnapshot(`
 			{
 			  "😄": {
-			    "count": 5,
+			    "count": 2,
 			  },
 			}
 		`);
@@ -24,7 +24,7 @@ describe('remoji api', () => {
 		expect(await response.json()).toMatchInlineSnapshot(`
 			{
 			  "😄": {
-			    "count": 4,
+			    "count": 1,
 			  },
 			}
 		`);
@@ -41,7 +41,7 @@ describe('remoji api', () => {
 		expect(await response.json()).toMatchInlineSnapshot(`
 			{
 			  "😄": {
-			    "count": 5,
+			    "count": 2,
 			  },
 			}
 		`);
