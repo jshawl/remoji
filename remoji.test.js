@@ -61,6 +61,9 @@ describe("remoji", () => {
     });
 
     describe("clicking on .remoji-option", () => {
+      beforeEach(() => {
+        localStorage.removeItem("remoji-reactions");
+      });
       it("creates a reaction", () => {
         mount();
         $(".remoji-add").click();
@@ -71,11 +74,13 @@ describe("remoji", () => {
         expect($(".remoji-reaction[data-remoji-emoji='😄']").innerHTML).toMatch(
           "1"
         );
+        expect(localStorage.getItem("remoji-reactions")).toBe('["😄"]');
         const otherOption = $(".remoji-options [data-remoji-emoji='❤️']");
         otherOption.click();
         expect($(".remoji-reaction[data-remoji-emoji='❤️']").innerHTML).toMatch(
           "1"
         );
+        expect(localStorage.getItem("remoji-reactions")).toBe('["😄","❤️"]');
       });
 
       it("increments a reaction", () => {
@@ -129,7 +134,9 @@ describe("remoji", () => {
         expect($(".remoji-reaction[data-remoji-emoji='😄']").innerHTML).toMatch(
           data.reactions["😄"].count
         );
+        localStorage.setItem("remoji-reactions", '["😄"]');
         option.click();
+        expect(localStorage.getItem("remoji-reactions")).toBe("[]");
         expect($(".remoji-reaction[data-remoji-emoji='😄']")).toBeFalsy();
       });
     });

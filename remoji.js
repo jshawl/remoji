@@ -25,9 +25,13 @@ class Remoji {
     });
   }
   update(reaction, self) {
+    const reactions = JSON.parse(
+      localStorage.getItem("remoji-reactions") ?? "[]"
+    );
     if (self === "true") {
       this.data.reactions[reaction].count--;
       this.data.reactions[reaction].self = false;
+      reactions.splice(reactions.indexOf(reaction), 1);
       if (this.data.reactions[reaction].count === 0) {
         delete this.data.reactions[reaction];
       }
@@ -36,13 +40,25 @@ class Remoji {
       this.data.reactions[reaction] ??= { count: 0 };
       this.data.reactions[reaction].self = true;
       this.data.reactions[reaction].count++;
+      reactions.push(reaction);
     }
+    localStorage.setItem("remoji-reactions", JSON.stringify(reactions));
     this.render();
   }
   load() {
     // eventually from an API
     // but also merging w/ local storage for unauthenticated reactions
-    this.data = JSON.parse(localStorage.getItem("remoji") || "{}");
+    this.data = JSON.parse(
+      localStorage.getItem("remoji") || '{"reactions":{}}'
+    );
+
+    const reactions = JSON.parse(
+      localStorage.getItem("remoji-reactions") || "[]"
+    );
+    reactions.forEach((reaction) => {
+      this.data.reactions[reaction] ??= { count: 1 };
+      this.data.reactions[reaction].self = true;
+    });
 
     this.render();
   }
@@ -67,8 +83,6 @@ class Remoji {
     });
   }
 }
-
-export const remoji = { init };
 
 const styles = () => `
   .remoji {
@@ -172,3 +186,5 @@ function element() {
   container.append(reactions);
   return container;
 }
+
+export const remoji = { init };
