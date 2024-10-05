@@ -141,7 +141,6 @@ describe("remoji", () => {
         });
         mount();
         await vi.waitFor(() => $(".remoji-reaction"));
-        console.log(document.body.innerHTML);
         $(".remoji-add").click();
         const option = $(".remoji-options [data-remoji-emoji='😄']");
         expect($('.remoji-reaction[data-remoji-emoji="😄"]').innerHTML).toMatch(
