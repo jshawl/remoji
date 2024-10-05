@@ -12,7 +12,7 @@ class JSONResponse extends Response {
 }
 
 const response: Record<string, Record<string, number>> = {
-	'😄': { count: 5 },
+	'😄': { count: 1 },
 };
 
 export default {
