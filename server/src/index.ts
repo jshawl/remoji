@@ -34,7 +34,7 @@ export default {
 				if (response[payload.emoji]) {
 					response[payload.emoji].count--;
 				}
-				if (response[payload.emoji].count === 0) {
+				if (response[payload.emoji]?.count === 0) {
 					delete response[payload.emoji];
 				}
 			}
