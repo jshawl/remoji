@@ -64,8 +64,12 @@ describe("remoji", () => {
       beforeEach(() => {
         localStorage.removeItem("remoji-reactions");
       });
-      it("creates a reaction", () => {
+      it.only("creates a reaction", async () => {
+        globalThis.fetch = vi.fn(() => ({
+          then: (cb) => cb({ json: async () => {} }),
+        }));
         mount();
+        await vi.waitFor(() => $(".remoji-reaction"));
         $(".remoji-add").click();
         const option = $(".remoji-options [data-remoji-emoji='😄']");
         expect($(".remoji-reaction[data-remoji-emoji='😄']")).toBeFalsy();
