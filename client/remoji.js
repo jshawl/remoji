@@ -49,7 +49,6 @@ class Remoji {
       this.data.reactions[emoji].count++;
       reactions.push(emoji);
     }
-    const org = window.location.host;
     fetch(this.apiUrl, {
       method: "POST",
       body: JSON.stringify({
