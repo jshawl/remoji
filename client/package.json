@@ -1,7 +1,7 @@
 {
   "name": "@jshawl/remoji",
-  "version": "0.1.0",
-  "description": "",
+  "version": "0.2.0",
+  "description": "emoji reactions, anywhere!",
   "files": [
     "remoji.js"
   ],
@@ -9,12 +9,22 @@
     "access": "public"
   },
   "main": "index.js",
+  "repository": "github:jshawl/remoji",
+  "bugs": {
+    "url": "https://github.com/jshawl/remoji/issues",
+    "email": "jesse@jesse.sh"
+  },
   "scripts": {
+    "postpack": "rm ./README.md",
+    "prepack": "cp ../README.md ./",
     "start": "npx http-server . --cors",
     "test": "vitest run --coverage"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "emoji",
+    "emoji-reactions"
+  ],
+  "author": "Jesse Shawl <jesse@jesse.sh>",
   "license": "ISC",
   "devDependencies": {
     "@vitest/coverage-v8": "^2.1.2",
