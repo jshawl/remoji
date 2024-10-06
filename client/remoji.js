@@ -1,7 +1,8 @@
 class Remoji {
-  constructor(element, id) {
+  constructor(element, id, emojis) {
     this.element = element;
     this.id = id;
+    this.emojis = emojis;
     const org = window.location.host;
     this.apiUrl = `https://remoji.jshawl.workers.dev/${org}/${this.id}`;
     if (!this.id) {
@@ -61,7 +62,12 @@ class Remoji {
   load() {
     fetch(this.apiUrl).then(async (response) => {
       const data = await response.json();
-      this.data = { reactions: data };
+      this.data = { reactions: {} };
+      for (let d in data) {
+        if (this.emojis.includes(d)) {
+          this.data.reactions[d] = data[d];
+        }
+      }
       const reactions = JSON.parse(
         localStorage.getItem("remoji-reactions") || "[]"
       );
@@ -154,7 +160,8 @@ const styles = () => `
   }
 `;
 
-function init() {
+function init(options = {}) {
+  options.emojis ??= ["👍", "😄", "❤️", "🚀", "👀"];
   const style = document.createElement("style");
   style.innerHTML = styles();
   document.head.appendChild(style);
@@ -167,20 +174,19 @@ function init() {
     Array.from(allOptions).map((options) => (options.style.display = "none"));
   });
   Array.from(containers).map((container) => {
-    const el = element();
+    const el = element(options.emojis);
     const id = container.getAttribute("data-remoji-id");
-    new Remoji(el, id);
+    new Remoji(el, id, options.emojis);
     container.appendChild(el);
   });
 }
 
-function element() {
-  const emojiOptions = ["👍", "😄", "❤️", "🚀", "👀"];
+function element(emojis) {
   const container = document.createElement("div");
   container.classList.add("remoji");
   const options = document.createElement("div");
   options.classList.add("remoji-options");
-  options.innerHTML = emojiOptions
+  options.innerHTML = emojis
     .map(
       (option) =>
         `<span class="remoji-option" data-remoji-emoji="${option}">${option}</span>`

@@ -13,3 +13,11 @@ emoji reactions anywhere! [demo](jshawl.github.io/remoji/)
   remoji.init();
 </script>
 ```
+
+## Configuration
+
+```js
+remoji.init({
+  emojis: ["👍", "👎"], // default: ["👍", "😄", "❤️", "🚀", "👀"]
+});
+```
