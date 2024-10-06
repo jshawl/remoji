@@ -1,13 +1,15 @@
 # remoji
 
-emoji reactions anywhere!
+[![npm version](https://badge.fury.io/js/@jshawl%2Fremoji.svg)](https://badge.fury.io/js/@jshawl%2Fremoji)
+
+emoji reactions anywhere! [demo](jshawl.github.io/remoji/)
 
 ## Usage
 
 ```html
-<div data-remoji-id="your unique id"></div>
+<div data-remoji-id="demo"></div>
 <script type="module">
-  import { remoji } from "http://localhost:8080/remoji.js";
+  import { remoji } from "https://www.unpkg.com/@jshawl/remoji@latest/remoji.js";
   remoji.init();
 </script>
 ```
