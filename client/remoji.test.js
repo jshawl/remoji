@@ -74,6 +74,16 @@ describe("remoji", () => {
       await vi.waitFor(() => $(".remoji-reaction"));
       expect(document.body.innerHTML).not.toMatch("🥦");
     });
+
+    it("has a development option", () => {
+      document.body.innerHTML = "<div data-remoji-id='a'></div>";
+      remoji.init({
+        development: true,
+      });
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringContaining("http://localhost:8787")
+      );
+    });
   });
 
   describe("clicking on .remoji-add", () => {

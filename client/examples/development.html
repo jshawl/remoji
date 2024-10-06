@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>remoji development</title>
+  </head>
+  <body>
+    <div data-remoji-id="demo"></div>
+    <script type="module">
+      import { remoji } from "http://127.0.0.1:8080/remoji.js";
+      remoji.init({
+        development: true,
+      });
+    </script>
+  </body>
+</html>
