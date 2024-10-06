@@ -2,6 +2,8 @@ class Remoji {
   constructor(element, id) {
     this.element = element;
     this.id = id;
+    const org = window.location.host;
+    this.apiUrl = `https://remoji.jshawl.workers.dev/${org}/${this.id}`;
     if (!this.id) {
       throw new Error("data-remoji-id attribute missing!");
     }
@@ -46,7 +48,7 @@ class Remoji {
       reactions.push(emoji);
     }
     const org = window.location.host;
-    fetch(`http://localhost:8787/${org}/abcd`, {
+    fetch(this.apiUrl, {
       method: "POST",
       body: JSON.stringify({
         action,
@@ -57,13 +59,7 @@ class Remoji {
     this.render();
   }
   load() {
-    // eventually from an API
-    // but also merging w/ local storage for unauthenticated reactions
-    // this.data = JSON.parse(
-    //   localStorage.getItem("remoji") || '{"reactions":{}}'
-    // );
-    const org = window.location.host;
-    fetch(`http://localhost:8787/${org}/abcd`).then(async (response) => {
+    fetch(this.apiUrl).then(async (response) => {
       const data = await response.json();
       this.data = { reactions: data };
       const reactions = JSON.parse(
