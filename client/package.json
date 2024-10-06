@@ -1,6 +1,6 @@
 {
   "name": "@jshawl/remoji",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "emoji reactions, anywhere!",
   "files": [
     "remoji.js"
