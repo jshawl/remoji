@@ -7,15 +7,22 @@
     <style>
       body {
         padding: 1rem;
+        font-family: Arial, Helvetica, sans-serif;
       }
     </style>
   </head>
   <body>
     <h1>remoji</h1>
+    <p><em>emoji reactions, anywhere!</em></p>
     <div data-remoji-id="demo"></div>
     <script type="module">
       import { remoji } from "https://www.unpkg.com/@jshawl/remoji@latest/remoji.js";
       remoji.init();
     </script>
+    <pre><code>&lt;div data-remoji-id="demo"></div>
+&lt;script type="module">
+  import { remoji } from "https://www.unpkg.com/@jshawl/remoji@latest/remoji.js";
+  remoji.init();
+&lt;/script></code></pre>
   </body>
 </html>
