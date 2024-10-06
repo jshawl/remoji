@@ -112,8 +112,11 @@ const styles = () => `
     border-radius: 100%;
     display: inline-block;
     font-size: 2rem;
-    height: 2rem;
+    font-family: serif;
+    text-align: center;
     line-height: 2rem;
+    height: 2rem;
+    width: 2rem;
   }
   .remoji-add:hover {
     background: #ddd;
