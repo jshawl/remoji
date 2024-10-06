@@ -1,7 +1,13 @@
 {
-  "name": "remoji",
-  "version": "1.0.0",
+  "name": "@jshawl/remoji",
+  "version": "0.0.1",
   "description": "",
+  "files": [
+    "remoji.js"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "index.js",
   "scripts": {
     "start": "npx http-server . --cors",
