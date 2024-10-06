@@ -55,6 +55,25 @@ describe("remoji", () => {
         "data-remoji-id attribute missing!"
       );
     });
+
+    it("allows users to specify their own options/reactions", () => {
+      document.body.innerHTML = "<div data-remoji-id='a'></div>";
+      const emojis = ["🤌", "🙌"];
+      remoji.init({
+        emojis,
+      });
+      const domEmojis = Array.from(
+        document.body.querySelectorAll("[data-remoji-emoji]")
+      ).map((element) => element.getAttribute("data-remoji-emoji"));
+      expect(domEmojis).toStrictEqual(emojis);
+    });
+
+    it("ignores non-allow-listed emoji reactions", async () => {
+      mockFetchResponseOnce({ "🥦": { count: 1 } });
+      mount();
+      await vi.waitFor(() => $(".remoji-reaction"));
+      expect(document.body.innerHTML).not.toMatch("🥦");
+    });
   });
 
   describe("clicking on .remoji-add", () => {
