@@ -1,12 +1,10 @@
 class Remoji {
-  constructor(element, id, emojis, development) {
+  constructor(element, id, emojis, apiUrl) {
     this.element = element;
     this.id = id;
     this.emojis = emojis;
     const org = window.location.host;
-    const baseUrl = development
-      ? `http://localhost:8787`
-      : `https://remoji.jshawl.workers.dev`;
+    const baseUrl = apiUrl || `https://remoji.jshawl.workers.dev`;
     this.apiUrl = `${baseUrl}/${org}/${this.id}`;
     if (!this.id) {
       throw new Error("data-remoji-id attribute missing!");
@@ -179,7 +177,7 @@ function init(options = {}) {
   Array.from(containers).map((container) => {
     const el = element(options.emojis);
     const id = container.getAttribute("data-remoji-id");
-    new Remoji(el, id, options.emojis, options.development);
+    new Remoji(el, id, options.emojis, options.apiUrl);
     container.appendChild(el);
   });
 }

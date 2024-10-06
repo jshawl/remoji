@@ -75,13 +75,14 @@ describe("remoji", () => {
       expect(document.body.innerHTML).not.toMatch("🥦");
     });
 
-    it("has a development option", () => {
+    it("has an apiUrl option", () => {
       document.body.innerHTML = "<div data-remoji-id='a'></div>";
+      const host = crypto.randomUUID();
       remoji.init({
-        development: true,
+        apiUrl: `https://${host}.com`,
       });
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining("http://localhost:8787")
+        expect.stringContaining(`https://${host}.com`)
       );
     });
   });
