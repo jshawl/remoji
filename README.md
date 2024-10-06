@@ -21,3 +21,23 @@ remoji.init({
   emojis: ["👍", "👎"], // default: ["👍", "😄", "❤️", "🚀", "👀"]
 });
 ```
+
+## Local Development
+
+Start the client:
+
+```
+cd client && npm start
+```
+
+Start the server:
+
+```
+cd server && npm start
+```
+
+Open the development page:
+
+```
+open http://127.0.0.1:8080/examples/development.html
+```
