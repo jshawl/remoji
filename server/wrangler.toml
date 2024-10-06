@@ -10,6 +10,11 @@ compatibility_flags = ["nodejs_compat"]
 [observability]
 enabled = true
 
+[[d1_databases]]
+binding = "DB" # i.e. available in your Worker on env.DB
+database_name = "remoji"
+database_id = "9418783c-25b2-48c0-8cbb-851d713964ff"
+
 # Automatically place your workloads in an optimal location to minimize latency.
 # If you are running back-end logic in a Worker, running it closer to your back-end infrastructure
 # rather than the end user may result in better performance.
