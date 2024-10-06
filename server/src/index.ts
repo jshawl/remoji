@@ -23,10 +23,10 @@ export default {
         .bind(org, id)
         .all<Record<string, number>>();
       const out = results.reduce<Record<string, { count: number }>>(
-        (acc, el) => {
-          acc[el.emoji] = { count: el.count };
-          return acc;
-        },
+        (acc, el) => ({
+          ...acc,
+          [el.emoji]: { count: el.count },
+        }),
         {}
       );
       return new JSONResponse(out);
