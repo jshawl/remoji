@@ -21,28 +21,8 @@ describe("remoji api", () => {
       method: "POST",
       body: JSON.stringify({
         emoji: "😄",
-        action: "decrement",
-      }),
-    });
-    const response = await SELF.fetch(
-      "https://example.com/127.0.0.1:8080/abcd"
-    );
-    expect(await response.json()).toStrictEqual({
-      "👀": {
-        count: 1,
-      },
-      "😄": {
-        count: 1,
-      },
-    });
-  });
-
-  it("responds to POST /:org/:id", async () => {
-    await SELF.fetch("https://example.com/127.0.0.1:8080/abcd", {
-      method: "POST",
-      body: JSON.stringify({
-        emoji: "😄",
         action: "increment",
+        userId: "user@example.com",
       }),
     });
     const response = await SELF.fetch(
@@ -54,6 +34,28 @@ describe("remoji api", () => {
       },
       "😄": {
         count: 3,
+      },
+    });
+  });
+
+  it("responds to POST /:org/:id", async () => {
+    await SELF.fetch("https://example.com/127.0.0.1:8080/abcd", {
+      method: "POST",
+      body: JSON.stringify({
+        emoji: "😄",
+        action: "decrement",
+        userId: "user@example.com",
+      }),
+    });
+    const response = await SELF.fetch(
+      "https://example.com/127.0.0.1:8080/abcd"
+    );
+    expect(await response.json()).toStrictEqual({
+      "👀": {
+        count: 1,
+      },
+      "😄": {
+        count: 2,
       },
     });
   });
