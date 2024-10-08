@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { remoji } from "./remoji";
 
 const resetDOM = () => {
@@ -7,7 +7,7 @@ const resetDOM = () => {
 };
 
 const mount = () => {
-  document.body.innerHTML = "<div data-remoji-id='a'></div>";
+  document.body.innerHTML = "<div data-remoji-id='test'></div>";
   remoji.init();
 };
 
@@ -21,6 +21,8 @@ const mockFetchResponseOnce = (response) => {
       }),
   }));
 };
+
+vi.stubGlobal("crypto", { randomUUID: vi.fn(() => "abc-def-ghi-jkl") });
 
 describe("remoji", () => {
   describe(".init()", () => {
@@ -85,6 +87,51 @@ describe("remoji", () => {
         expect.stringContaining(`https://${host}.com`)
       );
     });
+
+    describe("userId option", () => {
+      beforeEach(() => {
+        document.body.innerHTML = "<div data-remoji-id='a'></div>";
+      });
+
+      afterEach(() => {
+        localStorage.removeItem("remoji-user-id");
+      });
+
+      it("uses the provided userId", () => {
+        const remojis = remoji.init({
+          userId: "zyx-wvu-tsr-qpo",
+        });
+        expect(remojis.map((remoji) => remoji.userId)).toStrictEqual([
+          "zyx-wvu-tsr-qpo",
+        ]);
+      });
+
+      it("generates a userId", () => {
+        const remojis = remoji.init();
+        expect(remojis.map((remoji) => remoji.userId)).toStrictEqual([
+          "abc-def-ghi-jkl",
+        ]);
+        expect(localStorage.getItem("remoji-user-id")).toBe("abc-def-ghi-jkl");
+      });
+
+      it("reuses a previously generated userId", () => {
+        localStorage.setItem("remoji-user-id", "mno-pqr-stu-vwx");
+        const remojis = remoji.init();
+        expect(remojis.map((remoji) => remoji.userId)).toStrictEqual([
+          "mno-pqr-stu-vwx",
+        ]);
+      });
+
+      it("prefers the userId option over localStorage", () => {
+        localStorage.setItem("remoji-user-id", "mno-pqr-stu-vwx");
+        const remojis = remoji.init({
+          userId: "xxx-xxx-xxx-xxx",
+        });
+        expect(remojis.map((remoji) => remoji.userId)).toStrictEqual([
+          "xxx-xxx-xxx-xxx",
+        ]);
+      });
+    });
   });
 
   describe("clicking on .remoji-add", () => {
@@ -120,6 +167,17 @@ describe("remoji", () => {
         expect(localStorage.getItem("remoji-reactions")).toBe('["😄"]');
         const otherOption = $(".remoji-options [data-remoji-emoji='❤️']");
         otherOption.click();
+        expect(globalThis.fetch).toHaveBeenCalledWith(
+          "https://remoji.jshawl.workers.dev/localhost:3000/test",
+          {
+            body: JSON.stringify({
+              action: "increment",
+              emoji: "❤️",
+              userId: "abc-def-ghi-jkl",
+            }),
+            method: "POST",
+          }
+        );
         expect($(".remoji-reaction[data-remoji-emoji='❤️']").innerHTML).toMatch(
           "1"
         );
@@ -139,6 +197,17 @@ describe("remoji", () => {
           count
         );
         option.click();
+        expect(globalThis.fetch).toHaveBeenCalledWith(
+          "https://remoji.jshawl.workers.dev/localhost:3000/test",
+          {
+            body: JSON.stringify({
+              action: "increment",
+              emoji: "😄",
+              userId: "abc-def-ghi-jkl",
+            }),
+            method: "POST",
+          }
+        );
         expect($(".remoji-reaction[data-remoji-emoji='😄']").innerHTML).toMatch(
           count + 1
         );
@@ -158,6 +227,17 @@ describe("remoji", () => {
           count
         );
         option.click();
+        expect(globalThis.fetch).toHaveBeenCalledWith(
+          "https://remoji.jshawl.workers.dev/localhost:3000/test",
+          {
+            body: JSON.stringify({
+              action: "decrement",
+              emoji: "😄",
+              userId: "abc-def-ghi-jkl",
+            }),
+            method: "POST",
+          }
+        );
         expect($(".remoji-reaction[data-remoji-emoji='😄']").innerHTML).toMatch(
           count - 1
         );
@@ -178,6 +258,17 @@ describe("remoji", () => {
         );
         localStorage.setItem("remoji-reactions", '["😄"]');
         option.click();
+        expect(globalThis.fetch).toHaveBeenCalledWith(
+          "https://remoji.jshawl.workers.dev/localhost:3000/test",
+          {
+            body: JSON.stringify({
+              action: "decrement",
+              emoji: "😄",
+              userId: "abc-def-ghi-jkl",
+            }),
+            method: "POST",
+          }
+        );
         expect(localStorage.getItem("remoji-reactions")).toBe("[]");
         expect($(".remoji-reaction[data-remoji-emoji='😄']")).toBeFalsy();
       });
@@ -194,6 +285,17 @@ describe("remoji", () => {
         $(".remoji-add").click();
         const reaction = $(".remoji-reaction[data-remoji-emoji='😄']");
         reaction.click();
+        expect(globalThis.fetch).toHaveBeenCalledWith(
+          "https://remoji.jshawl.workers.dev/localhost:3000/test",
+          {
+            body: JSON.stringify({
+              action: "increment",
+              emoji: "😄",
+              userId: "abc-def-ghi-jkl",
+            }),
+            method: "POST",
+          }
+        );
         expect($(`.remoji-reaction[data-remoji-emoji='😄']`).innerHTML).toMatch(
           count + 1
         );
@@ -210,6 +312,17 @@ describe("remoji", () => {
         $(".remoji-add").click();
         const reaction = $(".remoji-reaction[data-remoji-emoji='😄']");
         reaction.click();
+        expect(globalThis.fetch).toHaveBeenCalledWith(
+          "https://remoji.jshawl.workers.dev/localhost:3000/test",
+          {
+            body: JSON.stringify({
+              action: "decrement",
+              emoji: "😄",
+              userId: "abc-def-ghi-jkl",
+            }),
+            method: "POST",
+          }
+        );
         expect($(`.remoji-reaction[data-remoji-emoji='😄']`).innerHTML).toMatch(
           count - 1
         );
@@ -226,6 +339,17 @@ describe("remoji", () => {
         $(".remoji-add").click();
         const reaction = $(".remoji-reaction[data-remoji-emoji='😄']");
         reaction.click();
+        expect(globalThis.fetch).toHaveBeenCalledWith(
+          "https://remoji.jshawl.workers.dev/localhost:3000/test",
+          {
+            body: JSON.stringify({
+              action: "decrement",
+              emoji: "😄",
+              userId: "abc-def-ghi-jkl",
+            }),
+            method: "POST",
+          }
+        );
         expect($(`.remoji-reaction[data-remoji-emoji='😄']`)).toBeFalsy();
       });
     });

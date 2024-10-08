@@ -1,8 +1,9 @@
 class Remoji {
-  constructor(element, id, emojis, apiUrl) {
+  constructor({ element, id, emojis, apiUrl, userId }) {
     this.element = element;
     this.id = id;
     this.emojis = emojis;
+    this.userId = userId;
     const org = window.location.host;
     const baseUrl = apiUrl || `https://remoji.jshawl.workers.dev`;
     this.apiUrl = `${baseUrl}/${org}/${this.id}`;
@@ -54,6 +55,7 @@ class Remoji {
       body: JSON.stringify({
         action,
         emoji,
+        userId: this.userId,
       }),
     });
     localStorage.setItem("remoji-reactions", JSON.stringify(reactions));
@@ -165,6 +167,11 @@ const styles = () => `
 
 function init(options = {}) {
   options.emojis ??= ["👍", "😄", "❤️", "🚀", "👀"];
+  options.userId =
+    options.userId ||
+    localStorage.getItem("remoji-user-id") ||
+    crypto.randomUUID();
+  localStorage.setItem("remoji-user-id", options.userId);
   const style = document.createElement("style");
   style.innerHTML = styles();
   document.head.appendChild(style);
@@ -176,11 +183,12 @@ function init(options = {}) {
     const allOptions = document.querySelectorAll(".remoji-options");
     Array.from(allOptions).map((options) => (options.style.display = "none"));
   });
-  Array.from(containers).map((container) => {
+  return Array.from(containers).map((container) => {
     const el = element(options.emojis);
     const id = container.getAttribute("data-remoji-id");
-    new Remoji(el, id, options.emojis, options.apiUrl);
+    const remoji = new Remoji({ element: el, id, ...options });
     container.appendChild(el);
+    return remoji;
   });
 }
 
