@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/@jshawl%2Fremoji.svg)](https://badge.fury.io/js/@jshawl%2Fremoji)
 
-emoji reactions anywhere! [demo](jshawl.github.io/remoji/)
+emoji reactions anywhere! [demo](https://jshawl.github.io/remoji/)
 
 ## Usage
 
