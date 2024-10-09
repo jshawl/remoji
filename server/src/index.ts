@@ -45,8 +45,10 @@ export default {
           .all();
       }
       if (payload.action === "decrement") {
-        const sql = `DELETE FROM reactions WHERE id = (SELECT MAX(id) FROM reactions WHERE org = ? AND instanceId = ? AND emoji = ?)`;
-        await env.DB.prepare(sql).bind(org, id, payload.emoji).run();
+        const sql = `DELETE FROM reactions WHERE id = (SELECT MAX(id) FROM reactions WHERE org = ? AND instanceId = ? AND emoji = ? AND userId = ?)`;
+        await env.DB.prepare(sql)
+          .bind(org, id, payload.emoji, payload.userId)
+          .run();
       }
       return new JSONResponse({ success: true });
     }
