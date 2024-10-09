@@ -125,6 +125,7 @@ const styles = () => `
     cursor: pointer;
   }
   .remoji-options {
+    background-color: #fff;
     border: 1px solid #ccc;
     border-radius: 6px;
     display: none;
