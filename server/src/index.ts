@@ -33,10 +33,16 @@ export default {
     }
 
     if (org && id && request.method === "POST") {
-      const payload = await request.json<{ action: string; emoji: string }>();
+      const payload = await request.json<{
+        action: string;
+        emoji: string;
+        userId: string;
+      }>();
       if (payload.action === "increment") {
-        const sql = `INSERT INTO reactions (org, instanceId, emoji) VALUES (?, ?, ?)`;
-        await env.DB.prepare(sql).bind(org, id, payload.emoji).all();
+        const sql = `INSERT INTO reactions (org, instanceId, emoji, userId) VALUES (?, ?, ?, ?)`;
+        await env.DB.prepare(sql)
+          .bind(org, id, payload.emoji, payload.userId ?? "")
+          .all();
       }
       if (payload.action === "decrement") {
         const sql = `DELETE FROM reactions WHERE id = (SELECT MAX(id) FROM reactions WHERE org = ? AND instanceId = ? AND emoji = ?)`;
