@@ -24,7 +24,7 @@ const mockFetchResponseOnce = (response) => {
 
 const postRequest = (payload) => {
   return [
-    `https://remoji.jshawl.workers.dev/localhost:3000/test`,
+    `https://remoji.jshawl.workers.dev/localhost%3A3000/test`,
     {
       body: JSON.stringify(payload),
       method: "POST",
@@ -95,6 +95,30 @@ describe("remoji", () => {
       });
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining(`https://${host}.com`)
+      );
+    });
+
+    it("has an orgId option", async () => {
+      mockFetchResponseOnce({ "😄": { count: 1 } });
+      document.body.innerHTML = "<div data-remoji-id='a'></div>";
+      const remojis = remoji.init({
+        orgId: "acme corp, inc.",
+      });
+      expect(remojis.map((remoji) => remoji.orgId)).toStrictEqual([
+        "acme%20corp%2C%20inc.",
+      ]);
+      await vi.waitFor(() => $(".remoji-reaction"));
+      $(".remoji-add").click();
+      const option = $(".remoji-options [data-remoji-emoji='😄']");
+      option.click();
+      const payload = postRequest({
+        action: "increment",
+        emoji: "😄",
+        userId: "abc-def-ghi-jkl",
+      })[1];
+      expect(globalThis.fetch).toHaveBeenCalledWith(
+        "https://remoji.jshawl.workers.dev/acme%20corp%2C%20inc./a",
+        payload
       );
     });
 
