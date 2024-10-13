@@ -168,6 +168,7 @@ const styles = () => `
 
 function init(options = {}) {
   options.emojis ??= ["👍", "😄", "❤️", "🚀", "👀"];
+  validateEmojis(options.emojis);
   options.userId =
     options.userId ||
     localStorage.getItem("remoji-user-id") ||
@@ -190,6 +191,15 @@ function init(options = {}) {
     const remoji = new Remoji({ element: el, id, ...options });
     container.appendChild(el);
     return remoji;
+  });
+}
+
+function validateEmojis(emojis) {
+  const emojiRegExp = new RegExp(/\p{Emoji}/u);
+  emojis.forEach((emoji) => {
+    if (!emojiRegExp.test(emoji)) {
+      throw new Error(`"${emoji}" is not an emoji 😭`);
+    }
   });
 }
 
