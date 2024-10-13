@@ -1,12 +1,12 @@
 class Remoji {
-  constructor({ element, id, emojis, apiUrl, userId }) {
+  constructor({ element, id, emojis, apiUrl, orgId, userId }) {
     this.element = element;
     this.id = id;
     this.emojis = emojis;
     this.userId = userId;
-    const org = window.location.host;
+    this.orgId = encodeURIComponent(orgId || window.location.host);
     const baseUrl = apiUrl || `https://remoji.jshawl.workers.dev`;
-    this.apiUrl = `${baseUrl}/${org}/${this.id}`;
+    this.apiUrl = `${baseUrl}/${this.orgId}/${this.id}`;
     if (!this.id) {
       throw new Error("data-remoji-id attribute missing!");
     }

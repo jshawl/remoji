@@ -20,6 +20,7 @@ emoji reactions anywhere! [demo](https://jshawl.github.io/remoji/)
 remoji.init({
   apiUrl: "https://my-emoji-reaction-server.com", // default: https://remoji.jshawl.workers.dev
   emojis: ["👍", "👎"], // default: ["👍", "😄", "❤️", "🚀", "👀"]
+  orgId: "acme corp, inc.", // default: window.location.host
   userId: "jesse@jesse.sh", // default: crypto.randomUUID()
 });
 ```
