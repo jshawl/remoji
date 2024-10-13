@@ -80,6 +80,14 @@ describe("remoji", () => {
       expect(domEmojis).toStrictEqual(emojis);
     });
 
+    it.each(["!", "not an emoji"])("prevents non-emojis", (emoji) => {
+      expect(() =>
+        remoji.init({
+          emojis: [emoji],
+        })
+      ).toThrowError(`"${emoji}" is not an emoji 😭`);
+    });
+
     it("ignores non-allow-listed emoji reactions", async () => {
       mockFetchResponseOnce({ "🥦": { count: 1 } });
       mount();
